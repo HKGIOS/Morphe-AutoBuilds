@@ -193,7 +193,14 @@ jobs:
           if [ "${{ steps.check-release.outputs.release_exists }}" == "true" ]; then
             echo "⬆️ Uploading new assets (clobbering existing)..."
 
-            # Delete superseded older-version APKs for this app/arch before upload.
+            # Upload FIRST, then delete superseded old versions. This order
+            # guarantees we never lose both: if the upload fails, the old APK
+            # is still there; if cleanup fails, the job fails loudly with a
+            # duplicate instead of silently losing the old.
+            # --clobber overwrites the file if it exists, adds it if it doesn't
+            gh release upload latest *.apk --clobber
+
+            # Delete superseded older-version APKs for this app/arch after upload.
             # --clobber only overwrites exact filenames; since APK names embed the
             # version, the old version (e.g. v2.4.0) would otherwise remain next
             # to the new v2.5.0. cleanup_old_apks.py removes any release APK that
@@ -204,11 +211,9 @@ jobs:
               [ -f "$apk" ] || continue
               echo "$apk" >> keep_apks.txt
             done
-            python scripts/cleanup_old_apks.py --release latest --keep-file keep_apks.txt || \
-              echo "⚠️  cleanup_old_apks.py failed; continuing with clobber upload"
-
-            # --clobber overwrites the file if it exists, adds it if it doesn't
-            gh release upload latest *.apk --clobber
+            python scripts/cleanup_old_apks.py --release latest --keep-file keep_apks.txt
+            # NB: no `||` fallback here. If cleanup fails, the job must fail
+            # loudly instead of silently accumulating superseded APKs.
 
             echo "📝 Updating release title and notes..."
             gh release edit latest \
