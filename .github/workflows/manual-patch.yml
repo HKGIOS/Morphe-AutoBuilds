@@ -60,15 +60,9 @@ jobs:
             config_file="$dir/${{ inputs.app_name }}.json"
             if [ -f "$config_file" ]; then
               echo "Updating $config_file with version ${{ inputs.version }}"
-              # Update JSON with specific version
-              python -c "
-              import json, sys, os
-              with open('$config_file', 'r') as f:
-                  config = json.load(f)
-              config['version'] = '${{ inputs.version }}'
-              with open('$config_file', 'w') as f:
-                  json.dump(config, f, indent=2)
-              "
+              # Update JSON with specific version (single line to avoid
+              # indentation issues inside python -c)
+              python3 -c "import json; p='$config_file'; c=json.load(open(p)); c['version']='${{ inputs.version }}'; json.dump(c, open(p, 'w'), indent=2)"
               echo "Updated: $config_file"
               break
             fi
