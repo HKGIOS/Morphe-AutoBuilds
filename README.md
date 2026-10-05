@@ -19,7 +19,7 @@
 
 
 <p align="center">
-  <strong>Professional, Automated ReVanced APK Builder</strong><br>
+  <strong>Professional, Automated Morphe APK Builder</strong><br>
   Multi-source • Multi-architecture • GitHub Actions Powered
 </p>
 
