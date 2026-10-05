@@ -1,6 +1,6 @@
 {
   "package": "com.facebook.katana",
-  "repo": "REPLACE_WITH_CODEBERG_REPO",
+  "repo": "RookieZ/Facebook-Stock",
   "tag": "facebook-stock-580",
   "version": "580.0.0.51.74",
   "arch": "arm64-v8a",
