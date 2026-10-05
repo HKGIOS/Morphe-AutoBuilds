@@ -82,11 +82,7 @@
     },
     {
       "app_name": "disney-plus",
-      "source": "rookie"
-    },
-    {
-      "app_name": "pinterest",
-      "source": "adobo"
+      "source": "aimal"
     },
     {
       "app_name": "duolingo",
@@ -94,19 +90,19 @@
     },
     {
       "app_name": "google-news",
-      "source": "rookie"
+      "source": "Hoo"
     },
     {
       "app_name": "messenger",
-      "source": "rookie"
+      "source": "devanced"
     },
     {
       "app_name": "photomath",
-      "source": "rookie"
+      "source": "devanced"
     },
     {
       "app_name": "pixiv",
-      "source": "rookie"
+      "source": "devanced"
     },
     {
       "app_name": "prime-video",
@@ -114,7 +110,7 @@
     },
     {
       "app_name": "proton-mail",
-      "source": "rookie"
+      "source": "hxreborn"
     },
     {
       "app_name": "proton-vpn",
@@ -166,31 +162,27 @@
     },
     {
       "app_name": "rar",
-      "source": "rookie"
+      "source": "rushiranpise"
     },
     {
       "app_name": "strava",
-      "source": "rookie"
+      "source": "devanced"
     },
     {
       "app_name": "tumblr",
-      "source": "rookie"
+      "source": "hoomans"
     },
     {
       "app_name": "threads",
-      "source": "rookie"
+      "source": "chiggi"
     },
     {
       "app_name": "crunchyroll",
       "source": "Hoo"
     },
     {
-      "app_name": "tasker",
-      "source": "dropped"
-    },
-    {
       "app_name": "icon-pack-studio",
-      "source": "rookie"
+      "source": "devanced"
     },
     {
       "app_name": "my-expenses",
@@ -269,18 +261,6 @@
       "source": "rushiranpise"
     },
     {
-      "app_name": "earphone",
-      "source": "tosox"
-    },
-    {
-      "app_name": "flatastic",
-      "source": "tosox"
-    },
-    {
-      "app_name": "kicker",
-      "source": "tosox"
-    },
-    {
       "app_name": "ticktick",
       "source": "paresh"
     },
@@ -334,11 +314,11 @@
     },
     {
       "app_name": "trakt",
-      "source": "tosox"
+      "source": "pixelpusher"
     },
     {
       "app_name": "letterboxd",
-      "source": "rookie"
+      "source": "devanced"
     },
     {
       "app_name": "kakaotalk",
@@ -347,10 +327,6 @@
     {
       "app_name": "mladinska",
       "source": "blazskufca"
-    },
-    {
-      "app_name": "fxfile",
-      "source": "dropped"
     },
     {
       "app_name": "myfitnesspal",
