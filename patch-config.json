@@ -50,7 +50,7 @@
     },
     {
       "app_name": "niagara",
-      "source": "Hoo"
+      "source": "d0nj"
     },
     {
       "app_name": "lightroom",
@@ -94,7 +94,7 @@
     },
     {
       "app_name": "messenger",
-      "source": "hushmessenger"
+      "source": "devanced"
     },
     {
       "app_name": "photomath",
@@ -102,7 +102,7 @@
     },
     {
       "app_name": "pixiv",
-      "source": "fripe070"
+      "source": "devanced"
     },
     {
       "app_name": "prime-video",
@@ -166,7 +166,7 @@
     },
     {
       "app_name": "strava",
-      "source": "rushiranpise"
+      "source": "devanced"
     },
     {
       "app_name": "tumblr",
@@ -318,7 +318,7 @@
     },
     {
       "app_name": "letterboxd",
-      "source": "hakim"
+      "source": "devanced"
     },
     {
       "app_name": "kakaotalk",
@@ -379,14 +379,6 @@
     {
       "app_name": "facebook",
       "source": "devanced"
-    },
-    {
-      "app_name": "twitch",
-      "source": "ryykitty-twitch"
-    },
-    {
-      "app_name": "tasker",
-      "source": "heval"
     }
   ]
 }
