@@ -383,6 +383,14 @@
     {
       "app_name": "twitch",
       "source": "ryykitty-twitch"
+    },
+    {
+      "app_name": "tasker",
+      "source": "heval"
+    },
+    {
+      "app_name": "kicker",
+      "source": "pyflat"
     }
   ]
 }
