@@ -187,7 +187,7 @@ If you prefer to build the APKs on your own machine, follow these steps.
 1. **Clone the repository:**
 ```bash
 git clone https://github.com/RookieEnough/morphe-AutoBuilds.git
-cd morphe-nonroot
+cd Morphe-AutoBuilds
 
 ```
 
