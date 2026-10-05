@@ -78,7 +78,7 @@ This repository utilizes a robust Python-based pipeline to ensure high reliabili
 ## 🛠️ Repository Structure
 
 ```text
-revanced-nonroot/
+Morphe-AutoBuilds/
 ├── .github/workflows/      # GitHub Actions automation
 │   ├── patch.yml           # Daily automated builds (06:00 UTC)
 │   └── manual-patch.yml    # Manual trigger workflow
@@ -87,7 +87,7 @@ revanced-nonroot/
 │   ├── apkpure/            # APKPure definitions
 │   └── uptodown/           # UptoDown definitions
 ├── patches/                # Patch inclusion/exclusion rules
-├── sources/                # ReVanced tool source definitions
+├── sources/                # Morphe tool source definitions
 ├── src/                    # Core Python build logic
 ├── arch-config.json        # Architecture build matrix
 ├── patch-config.json       # App build configuration
