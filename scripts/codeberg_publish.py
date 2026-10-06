@@ -143,6 +143,8 @@ def main():
     p.add_argument("--repo", required=True)
     p.add_argument("--tag", default="latest")
     p.add_argument("--apk-dir", required=True)
+    p.add_argument("--clobber", action="store_true",
+                   help="delete an existing asset with the same name before uploading")
     args = p.parse_args()
 
     apk_dir = Path(args.apk_dir)
@@ -158,6 +160,14 @@ def main():
 
     rel = get_or_create_release(args.owner, args.repo, args.tag, args.token)
     release_id = rel["id"]
+
+    # Clobber: remove same-name assets first so re-uploads replace cleanly
+    if args.clobber:
+        existing = {a["name"]: a["id"] for a in rel.get("assets", [])}
+        for f in list(apks) + list(manifests):
+            dup_id = existing.get(f.name)
+            if dup_id:
+                delete_asset(args.owner, args.repo, release_id, args.token, dup_id, f.name)
 
     # Upload new APKs first (never delete before upload succeeds)
     uploaded_names = []
