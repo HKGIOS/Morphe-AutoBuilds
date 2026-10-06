@@ -19,10 +19,23 @@ import os
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from src import gitlab_api
-from gitlab_publish_release import build_release_notes
+
+import importlib.util
+
+def _load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[name] = mod
+    spec.loader.exec_module(mod)
+    return mod
+
+_HERE = Path(__file__).resolve().parent
+# Load the two modules by path so importing `src/__init__.py`
+# (which pulls the whole downloader dependency tree) is avoided.
+gitlab_api = _load("gitlab_api", _HERE.parent / "src" / "gitlab_api.py")
+_glpub = _load("gitlab_publish_release", _HERE / "gitlab_publish_release.py")
+build_release_notes = _glpub.build_release_notes
 import requests
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s",

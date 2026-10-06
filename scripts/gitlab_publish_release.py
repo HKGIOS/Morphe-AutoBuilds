@@ -21,7 +21,15 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from src import gitlab_api
+import importlib.util as _ilu
+def _load_gitlab_api():
+    _spec = _ilu.spec_from_file_location(
+        "gitlab_api", Path(__file__).resolve().parent.parent / "src" / "gitlab_api.py")
+    _mod = _ilu.module_from_spec(_spec)
+    sys.modules["gitlab_api"] = _mod
+    _spec.loader.exec_module(_mod)
+    return _mod
+gitlab_api = _load_gitlab_api()
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s",
                     datefmt="%Y-%m-%d %H:%M:%S")
