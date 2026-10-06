@@ -335,7 +335,7 @@ jobs:
       - name: Display Release URL
         if: steps.check-apks.outputs.skip_release == 'false'
         run: |
-          echo "Release URL: https://gitlab.com/sarthaksinha00/Community-builds/-/releases"
+          echo "Release URL: https://gitlab.com/communitybuilds/Community-builds/-/releases"
           echo ""
           echo "Direct Download Links:"
           for apk in ./release-apks/*.apk; do

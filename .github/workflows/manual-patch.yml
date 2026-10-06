@@ -147,7 +147,7 @@ jobs:
       - name: Show Download Links
         if: ${{ inputs.replace_in_release == true }}
         run: |
-          echo "Updated Release URL: https://gitlab.com/sarthaksinha00/Community-builds/-/releases"
+          echo "Updated Release URL: https://gitlab.com/communitybuilds/Community-builds/-/releases"
           echo ""
           echo "Direct APK links:"
           for apk in *.apk; do
