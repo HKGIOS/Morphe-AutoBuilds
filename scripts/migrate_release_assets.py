@@ -51,6 +51,17 @@ def main() -> int:
     if args.dry_run:
         for f in files:
             print(f"  [dry-run] would upload: {f.name} ({f.stat().st_size} bytes)")
+        # Validate the token with a cheap authenticated call so a bad/expired
+        # token is caught before gigabytes are moved.
+        if token:
+            try:
+                cb.api("GET", f"/repos/{args.owner}/{args.repo}", token)
+                logging.info("Codeberg token OK (authenticated).")
+            except Exception as e:
+                logging.error(f"Codeberg token check failed: {e}")
+                return 1
+        else:
+            logging.warning("No CODEBERG_TOKEN set; skipping token check.")
         return 0
 
     rel = cb.get_or_create_release(args.owner, args.repo, args.tag, token)
