@@ -59,8 +59,26 @@ def api(method: str, path: str, token: str, data=None, headers=None):
         raise
 
 
+def ensure_releases_enabled(owner: str, repo: str, token: str):
+    """Forgejo repos can be created with the releases feature disabled
+    (has_releases=false), which makes every /releases endpoint 404. The
+    RookieZ/Community-Builds repo was created that way, so enable it via
+    the edit-repo API before touching releases."""
+    try:
+        r, _ = api("GET", f"/repos/{owner}/{repo}", token)
+    except Exception as e:
+        logging.warning(f"could not read repo settings, skipping releases check: {e}")
+        return
+    if r.get("has_releases"):
+        return
+    logging.info("Releases are disabled on this repo; enabling via repo settings...")
+    api("PATCH", f"/repos/{owner}/{repo}", token, {"has_releases": True})
+    logging.info("Releases enabled on the repo.")
+
+
 def get_or_create_release(owner: str, repo: str, tag: str, token: str) -> dict:
     """Get the release by tag, or create it if missing."""
+    ensure_releases_enabled(owner, repo, token)
     try:
         rel, _ = api("GET", f"/repos/{owner}/{repo}/releases/tags/{tag}", token)
         logging.info(f"Found existing release '{tag}' (id={rel['id']})")
