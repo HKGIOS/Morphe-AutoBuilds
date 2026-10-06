@@ -113,6 +113,14 @@ def main() -> int:
             gitlab_api.delete_asset_link(args.tag, link["id"])
             gitlab_api.delete_package_file(name)
 
+    if args.merge:
+        # Refresh release notes from the final asset set: merge mode otherwise
+        # preserves the old notes, which would list stale filenames.
+        final_names = [l["name"] for l in gitlab_api.list_asset_links(args.tag)]
+        if final_names:
+            mtitle, mnotes = build_release_notes(final_names)
+            gitlab_api.ensure_release(args.tag, mtitle, mnotes, ref)
+
     logging.info("GitLab release publish complete.")
     return 0
 

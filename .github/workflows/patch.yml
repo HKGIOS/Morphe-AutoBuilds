@@ -310,37 +310,37 @@ jobs:
         run: |
           python scripts/validate_github_auth.py
 
-      - name: Publish to Codeberg Releases
+      - name: Install Publisher Dependencies
+        if: steps.check-apks.outputs.skip_release == 'false'
+        run: pip install requests
+
+      - name: Publish to GitLab Releases
         if: steps.check-apks.outputs.skip_release == 'false'
         env:
-          CODEBERG_TOKEN: ${{ secrets.CODEBERG_TOKEN }}
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+          GITLAB_PROJECT_ID: "87288318"
         run: |
-          if [ -z "$CODEBERG_TOKEN" ]; then
-            echo "CODEBERG_TOKEN secret is not set on this repo."
-            echo "Create the RookieZ/Community-Builds repo on Codeberg, add a token as the CODEBERG_TOKEN repo secret, then re-run."
+          if [ -z "$GITLAB_TOKEN" ]; then
+            echo "GITLAB_TOKEN secret is not set on this repo."
             exit 1
           fi
-          # codeberg_publish.py: creates the 'latest' release if missing,
-          # uploads new APKs + manifest (clobbering same names), deletes
-          # superseded older-version APKs, and refreshes the release notes.
+          # gitlab_publish_release.py --merge: uploads new APKs + manifest to the
+          # GitLab generic package registry, add/replaces their release asset
+          # links, deletes superseded older-version APKs, refreshes notes.
           # Upload-first-then-cleanup order is preserved inside the script.
-          python scripts/codeberg_publish.py \
-            --token "$CODEBERG_TOKEN" \
-            --owner RookieZ \
-            --repo Community-Builds \
-            --tag latest \
-            --apk-dir ./release-apks \
-            --clobber
+          python scripts/gitlab_publish_release.py \
+            --apks-dir ./release-apks \
+            --merge
 
       - name: Display Release URL
         if: steps.check-apks.outputs.skip_release == 'false'
         run: |
-          echo "Release URL: https://codeberg.org/RookieZ/Community-Builds/releases/tag/latest"
+          echo "Release URL: https://gitlab.com/sarthaksinha00/Community-builds/-/releases"
           echo ""
           echo "Direct Download Links:"
           for apk in ./release-apks/*.apk; do
             filename=$(basename "$apk")
-            echo "- $filename: https://codeberg.org/RookieZ/Community-Builds/releases/download/latest/$filename"
+            echo "- $filename: https://gitlab.com/api/v4/projects/87288318/packages/generic/morphe-apks/latest/$filename"
           done
 
   cleanup:

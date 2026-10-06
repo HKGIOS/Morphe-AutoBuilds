@@ -124,34 +124,34 @@ jobs:
           name: manual-apk-${{ inputs.app_name }}-${{ inputs.architecture }}
           path: "*.apk"
       
-      - name: Publish to Codeberg Releases
+      - name: Install Publisher Dependencies
+        if: ${{ inputs.replace_in_release == true }}
+        run: pip install requests
+
+      - name: Publish to GitLab Releases
         if: ${{ inputs.replace_in_release == true }}
         env:
-          CODEBERG_TOKEN: ${{ secrets.CODEBERG_TOKEN }}
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+          GITLAB_PROJECT_ID: "87288318"
         run: |
-          if [ -z "$CODEBERG_TOKEN" ]; then
-            echo "CODEBERG_TOKEN secret is not set on this repo."
-            echo "Create the RookieZ/Community-Builds repo on Codeberg, add a token as the CODEBERG_TOKEN repo secret, then re-run."
+          if [ -z "$GITLAB_TOKEN" ]; then
+            echo "GITLAB_TOKEN secret is not set on this repo."
             exit 1
           fi
           mkdir -p ./release-apks
           cp -f *.apk ./release-apks/ 2>/dev/null || true
-          python scripts/codeberg_publish.py \
-            --token "$CODEBERG_TOKEN" \
-            --owner RookieZ \
-            --repo Community-Builds \
-            --tag latest \
-            --apk-dir ./release-apks \
-            --clobber
+          python scripts/gitlab_publish_release.py \
+            --apks-dir ./release-apks \
+            --merge
 
       - name: Show Download Links
         if: ${{ inputs.replace_in_release == true }}
         run: |
-          echo "Updated Release URL: https://codeberg.org/RookieZ/Community-Builds/releases/tag/latest"
+          echo "Updated Release URL: https://gitlab.com/sarthaksinha00/Community-builds/-/releases"
           echo ""
           echo "Direct APK links:"
           for apk in *.apk; do
-            echo "  - https://codeberg.org/RookieZ/Community-Builds/releases/download/latest/$apk"
+            echo "  - https://gitlab.com/api/v4/projects/87288318/packages/generic/morphe-apks/latest/$apk"
           done
 
       - name: Cleanup Version Override
