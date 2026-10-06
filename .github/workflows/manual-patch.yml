@@ -144,15 +144,11 @@ jobs:
             --apks-dir ./release-apks \
             --merge
 
-      - name: Show Download Links
+      - name: Publish Summary
         if: ${{ inputs.replace_in_release == true }}
         run: |
-          echo "Updated Release URL: https://gitlab.com/communitybuilds/Community-builds/-/releases"
-          echo ""
-          echo "Direct APK links:"
-          for apk in *.apk; do
-            echo "  - https://gitlab.com/api/v4/projects/87288318/packages/generic/morphe-apks/latest/$apk"
-          done
+          count=$(ls -1 *.apk 2>/dev/null | wc -l)
+          echo "Published $count APK(s) to the release."
 
       - name: Cleanup Version Override
         if: ${{ inputs.version != '' && always() }}

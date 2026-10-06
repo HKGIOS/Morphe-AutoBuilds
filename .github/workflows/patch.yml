@@ -337,16 +337,11 @@ jobs:
             --apks-dir ./release-apks \
             --merge
 
-      - name: Display Release URL
+      - name: Publish Summary
         if: steps.check-apks.outputs.skip_release == 'false'
         run: |
-          echo "Release URL: https://gitlab.com/sarthaksinha00/Community-builds/-/releases"
-          echo ""
-          echo "Direct Download Links:"
-          for apk in ./release-apks/*.apk; do
-            filename=$(basename "$apk")
-            echo "- $filename: https://gitlab.com/api/v4/projects/87288318/packages/generic/morphe-apks/latest/$filename"
-          done
+          count=$(ls -1 ./release-apks/*.apk 2>/dev/null | wc -l)
+          echo "Published $count APK(s) plus manifest to the release."
 
   cleanup:
     name: Cleanup Workflow Runs
