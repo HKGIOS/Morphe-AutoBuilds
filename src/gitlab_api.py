@@ -143,11 +143,20 @@ def ensure_release(tag: str, name: str, description: str, ref: str) -> Dict[str,
 
 
 def list_asset_links(tag: str) -> List[Dict[str, Any]]:
-    r = api("GET", f"/releases/{tag}/assets/links")
-    if r.status_code == 404:
-        return []
-    r.raise_for_status()
-    return r.json()
+    # Paginate: the API defaults to 20 links per page and we have 100+.
+    links: List[Dict[str, Any]] = []
+    page = 1
+    while True:
+        r = api("GET", f"/releases/{tag}/assets/links?per_page=100&page={page}")
+        if r.status_code == 404:
+            return []
+        r.raise_for_status()
+        batch = r.json()
+        links.extend(batch)
+        if len(batch) < 100:
+            break
+        page += 1
+    return links
 
 
 def replace_asset_links(tag: str, assets: List[tuple]) -> None:

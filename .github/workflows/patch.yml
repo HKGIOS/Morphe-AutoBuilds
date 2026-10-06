@@ -90,6 +90,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FORCE_FULL_REBUILD: ${{ inputs.force_full_rebuild || 'false' }}
+          # Release state now lives on GitLab: the planner reads manifest.json
+          # and the APK list from the GitLab release instead of GitHub's.
+          MORPHE_PLATFORM: gitlab
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+          GITLAB_PROJECT_ID: "87288318"
         run: |
           python scripts/check_app_updates.py
 
@@ -335,7 +340,7 @@ jobs:
       - name: Display Release URL
         if: steps.check-apks.outputs.skip_release == 'false'
         run: |
-          echo "Release URL: https://gitlab.com/communitybuilds/Community-builds/-/releases"
+          echo "Release URL: https://gitlab.com/sarthaksinha00/Community-builds/-/releases"
           echo ""
           echo "Direct Download Links:"
           for apk in ./release-apks/*.apk; do
