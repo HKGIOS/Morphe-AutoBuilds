@@ -379,6 +379,10 @@
     {
       "app_name": "facebook",
       "source": "devanced"
+    },
+    {
+      "app_name": "viber",
+      "source": "canh0chua"
     }
   ]
 }
