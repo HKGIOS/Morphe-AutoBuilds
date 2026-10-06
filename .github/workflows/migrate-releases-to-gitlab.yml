@@ -47,8 +47,22 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p ./gh-assets
-          gh release download latest --dir ./gh-assets
-          echo "Downloaded $(ls -1 ./gh-assets | wc -l) files"
+          expected=$(gh release view latest --json assets --jq '.assets | length')
+          echo "Expecting $expected assets"
+          # GitHub's API occasionally 500s on a single asset; retry the batch
+          # with --skip-existing until the file count matches.
+          for i in 1 2 3 4 5; do
+            gh release download latest --dir ./gh-assets --skip-existing || true
+            got=$(ls -1 ./gh-assets | wc -l)
+            echo "Attempt $i: $got/$expected files"
+            [ "$got" -ge "$expected" ] && break
+            sleep 15
+          done
+          got=$(ls -1 ./gh-assets | wc -l)
+          if [ "$got" -lt "$expected" ]; then
+            echo "Only downloaded $got of $expected assets after 5 attempts"
+            exit 1
+          fi
 
       - name: Migrate assets to GitLab and verify
         env:

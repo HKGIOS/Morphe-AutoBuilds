@@ -56,6 +56,34 @@ def main() -> int:
     total = sum(f.stat().st_size for f in files)
     logging.info(f"{len(files)} file(s), {total / 1e9:.2f} GB total")
 
+    # Pre-check: local files must match the GitHub release asset sizes, so a
+    # truncated download can never be uploaded as if it were complete.
+    try:
+        gr = requests.get(
+            "https://api.github.com/repos/RookieEnough/Morphe-AutoBuilds"
+            "/releases/tags/latest", timeout=30)
+        gr.raise_for_status()
+        expected = {a["name"]: a["size"] for a in gr.json().get("assets", [])}
+    except Exception as e:
+        logging.error(f"Could not read GitHub release asset list: {e}")
+        return 1
+    bad = []
+    for f in files:
+        if f.name not in expected:
+            bad.append(f"NOT IN GITHUB RELEASE: {f.name}")
+        elif f.stat().st_size != expected[f.name]:
+            bad.append(f"SIZE MISMATCH vs GitHub: {f.name} "
+                       f"(local {f.stat().st_size}, github {expected[f.name]})")
+    for name in expected:
+        if name not in {f.name for f in files}:
+            bad.append(f"MISSING LOCALLY: {name}")
+    if bad:
+        logging.error("Local files do not match the GitHub release:")
+        for line in bad:
+            logging.error(f"  {line}")
+        return 1
+    logging.info("Local files match the GitHub release (names + sizes).")
+
     if args.dry_run:
         for f in files:
             print(f"  [dry-run] would upload: {f.name} ({f.stat().st_size} bytes)")
