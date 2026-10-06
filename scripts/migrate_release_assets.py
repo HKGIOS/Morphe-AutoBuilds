@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """One-time migration: copy release assets from the GitHub 'latest' release
 (already downloaded to --src-dir, e.g. via `gh release download latest`)
-to the Codeberg Morphe-Releases 'latest' release, then verify.
+to the Codeberg Community-Builds 'latest' release, then verify.
 
 Verification compares name -> size for every local file against the assets
 now present on the Codeberg release and exits non-zero on any mismatch, so
@@ -9,7 +9,7 @@ the GitHub release is only ever deleted after a proven-complete migration.
 
 Usage:
     python scripts/migrate_release_assets.py --src-dir ./gh-assets [--dry-run]
-                                             [--owner RookieZ] [--repo Morphe-Releases]
+                                             [--owner RookieZ] [--repo Community-Builds]
                                              [--tag latest]
 """
 import argparse
@@ -29,7 +29,7 @@ def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--src-dir", required=True)
     p.add_argument("--owner", default="RookieZ")
-    p.add_argument("--repo", default="Morphe-Releases")
+    p.add_argument("--repo", default="Community-Builds")
     p.add_argument("--tag", default="latest")
     p.add_argument("--dry-run", action="store_true")
     args = p.parse_args()

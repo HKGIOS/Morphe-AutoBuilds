@@ -1,9 +1,9 @@
 name: Migrate GitHub release assets to Codeberg (one-time)
 
 # One-time migration: copies every asset from the GitHub 'latest' release to
-# the Codeberg RookieZ/Morphe-Releases 'latest' release and verifies
+# the Codeberg RookieZ/Community-Builds 'latest' release and verifies
 # name+size of every file. Run with dry_run first, then for real.
-# Requires the CODEBERG_TOKEN repo secret and the RookieZ/Morphe-Releases
+# Requires the CODEBERG_TOKEN repo secret and the RookieZ/Community-Builds
 # repo to exist on Codeberg.
 
 on:
@@ -35,7 +35,7 @@ jobs:
           CODEBERG_TOKEN: ${{ secrets.CODEBERG_TOKEN }}
         run: |
           if [ -z "$CODEBERG_TOKEN" ]; then
-            echo "CODEBERG_TOKEN secret is not set. Create RookieZ/Morphe-Releases on Codeberg, add the token, then re-run."
+            echo "CODEBERG_TOKEN secret is not set. Create RookieZ/Community-Builds on Codeberg, add the token, then re-run."
             exit 1
           fi
 

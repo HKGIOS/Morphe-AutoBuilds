@@ -131,7 +131,7 @@ jobs:
         run: |
           if [ -z "$CODEBERG_TOKEN" ]; then
             echo "CODEBERG_TOKEN secret is not set on this repo."
-            echo "Create the RookieZ/Morphe-Releases repo on Codeberg, add a token as the CODEBERG_TOKEN repo secret, then re-run."
+            echo "Create the RookieZ/Community-Builds repo on Codeberg, add a token as the CODEBERG_TOKEN repo secret, then re-run."
             exit 1
           fi
           mkdir -p ./release-apks
@@ -139,7 +139,7 @@ jobs:
           python scripts/codeberg_publish.py \
             --token "$CODEBERG_TOKEN" \
             --owner RookieZ \
-            --repo Morphe-Releases \
+            --repo Community-Builds \
             --tag latest \
             --apk-dir ./release-apks \
             --clobber
@@ -147,11 +147,11 @@ jobs:
       - name: Show Download Links
         if: ${{ inputs.replace_in_release == true }}
         run: |
-          echo "Updated Release URL: https://codeberg.org/RookieZ/Morphe-Releases/releases/tag/latest"
+          echo "Updated Release URL: https://codeberg.org/RookieZ/Community-Builds/releases/tag/latest"
           echo ""
           echo "Direct APK links:"
           for apk in *.apk; do
-            echo "  - https://codeberg.org/RookieZ/Morphe-Releases/releases/download/latest/$apk"
+            echo "  - https://codeberg.org/RookieZ/Community-Builds/releases/download/latest/$apk"
           done
 
       - name: Cleanup Version Override

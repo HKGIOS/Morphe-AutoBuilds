@@ -9,7 +9,7 @@ Usage:
     python scripts/codeberg_publish.py \
         --token "$CODEBERG_TOKEN" \
         --owner RookieZ \
-        --repo Morphe-Releases \
+        --repo Community-Builds \
         --tag latest \
         --apk-dir ./all-apks
 """

@@ -3,7 +3,7 @@
 # 🔧 Morphe Non-Root Builder
 
 [![Daily Build](https://img.shields.io/github/actions/workflow/status/RookieEnough/Morphe-AutoBuilds/patch.yml?label=Daily%20Build&style=for-the-badge&color=2ea44f)](https://github.com/RookieEnough/Morphe-AutoBuilds/actions/workflows/patch.yml)
-[![Latest Release](https://img.shields.io/badge/Latest%20Release-Codeberg-0A0A0A?style=for-the-badge&logo=codeberg)](https://codeberg.org/RookieZ/Morphe-Releases/releases/tag/latest)
+[![Latest Release](https://img.shields.io/badge/Latest%20Release-Codeberg-0A0A0A?style=for-the-badge&logo=codeberg)](https://codeberg.org/RookieZ/Community-Builds/releases/tag/latest)
 [![Python Version](https://img.shields.io/badge/Python-3.11%2B-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![License](https://img.shields.io/github/license/RookieEnough/Revanced-AutoBuilds?style=for-the-badge&color=orange)](LICENSE)
 
@@ -27,7 +27,7 @@
 A sophisticated, automated pipeline that builds ready-to-install Morphe applications for <strong>non-rooted Android devices</strong>. This system automatically fetches the latest Morphe tools, downloads base APKs from multiple sources, applies patches, and publishes optimized APKs with architecture-specific builds.
 </p>
 
-[![View Latest Release](https://img.shields.io/badge/View%20Latest%20Release-0A0A0A?style=flat&logo=codeberg&logoColor=white)](https://codeberg.org/RookieZ/Morphe-Releases/releases/tag/latest)
+[![View Latest Release](https://img.shields.io/badge/View%20Latest%20Release-0A0A0A?style=flat&logo=codeberg&logoColor=white)](https://codeberg.org/RookieZ/Community-Builds/releases/tag/latest)
 [![Report Bug](https://img.shields.io/badge/Report%20Bug-0A0A0A?style=flat&logo=github&logoColor=white)](https://github.com/RookieEnough/Morphe-AutoBuilds/issues)
 [![Request Feature](https://img.shields.io/badge/Request%20Feature-0A0A0A?style=flat&logo=github&logoColor=white)](https://github.com/RookieEnough/Morphe-AutoBuilds/issues)
 
@@ -44,7 +44,7 @@ A sophisticated, automated pipeline that builds ready-to-install Morphe applicat
 
 | Mirror | Description | Link |
 | :--- | :--- | :--- |
-| **Codeberg Releases** | Primary source. Contains all builds. | [**Download Latest Release**](https://codeberg.org/RookieZ/Morphe-Releases/releases/tag/latest) |
+| **Codeberg Releases** | Primary source. Contains all builds. | [**Download Latest Release**](https://codeberg.org/RookieZ/Community-Builds/releases/tag/latest) |
 
 ### 📱 Supported Apps & Architectures
 
