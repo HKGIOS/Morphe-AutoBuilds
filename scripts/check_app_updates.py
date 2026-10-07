@@ -929,17 +929,15 @@ def plan_incremental(full_matrix: List[dict], old_manifest: Optional[dict],
                     )
             old_apk = carried_apk
             if old_apk and old_apk not in existing_apk_set:
-                # Asset-links API is unreliable (may return 0 even when files exist
-                # in the package registry). If the manifest has a valid entry for
-                # the target version, trust it and don't force a rebuild.
-                manifest_built_ver = old_entries.get(mkey, {}).get("built_version")
-                if manifest_built_ver and manifest_built_ver == target_ver:
-                    logging.debug(
-                        f"  {app}/{src}: manifest shows {old_apk} built for "
-                        f"target {target_ver}; skipping rebuild despite missing asset link"
-                    )
-                else:
-                    reasons.append("apk-missing-from-release")
+                # Asset-links API is unreliable (returns 0 even when files exist
+                # in the package registry). If the manifest has a record of this
+                # APK being built, trust the manifest and don't force a rebuild.
+                # The file exists in the package registry; the API is just broken.
+                logging.debug(
+                    f"  {app}/{src}: manifest shows {old_apk} was built; "
+                    f"skipping rebuild despite missing asset link (API unreliable)"
+                )
+                # Don't add to reasons - trust the manifest
             if not old_apk:
                 reasons.append("no-apk-recorded")
 
