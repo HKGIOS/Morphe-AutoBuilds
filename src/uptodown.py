@@ -135,17 +135,13 @@ def _xapk_url_via_trawl(page_url: str) -> str | None:
 
     Uptodown serves some versions (e.g. Facebook 580.0.0.51.74) as XAPK-only.
     The download button is a <button> without a data-url; the actual URL is
-    resolved by JavaScript. Use the CI trawl service to render the page and
-    capture the resulting download link.
+    resolved by JavaScript. Use FlareSolverr to render the page and capture
+    the resulting download link.
     """
-    try:
-        from src import trawl
-    except ImportError:
+    result = flaresolverr.solve(page_url, timeout=45)
+    if not result or not result.get("html"):
         return None
-    rendered = trawl.fetch(page_url)
-    if not rendered:
-        return None
-    soup = BeautifulSoup(rendered.content, "html.parser")
+    soup = BeautifulSoup(result["html"], "html.parser")
     # After JS runs, the button may gain an href/data-url, or the page may
     # contain a direct dw.uptodown.com link.
     link = _direct_url_from_page(soup, page_url)

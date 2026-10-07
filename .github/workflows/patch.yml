@@ -144,11 +144,6 @@ jobs:
     needs: patch-apps
     runs-on: ubuntu-latest
     services:
-      trawl:
-        image: ghcr.io/germondai/trawl:latest
-        ports:
-          - 8191:8191
-        options: --shm-size=1gb
       flaresolverr:
         image: ghcr.io/flaresolverr/flaresolverr:latest
         ports:
@@ -193,7 +188,6 @@ jobs:
           SOURCE: ${{ matrix.source }}
           ARCH: ${{ matrix.arch }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TRAWL_URL: http://localhost:8191
           FLARESOLVERR_URL: http://localhost:8192/v1
         run: |
           echo "Building ${{ matrix.app_name }} with ${{ matrix.source }}..."
