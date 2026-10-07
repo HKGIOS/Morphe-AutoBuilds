@@ -14,6 +14,7 @@ Project: ``CI_PROJECT_ID`` (auto-provided by GitLab CI).
 """
 import logging
 import os
+import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -24,6 +25,10 @@ PACKAGE_VERSION = "latest"
 RELEASE_TAG = "latest"
 
 _log = logging.getLogger(__name__)
+
+# Retry transient failures (5xx, 429, network errors)
+RETRYABLE_STATUS = {429, 500, 502, 503, 504}
+MAX_RETRIES = 3
 
 
 def _base() -> str:
@@ -50,7 +55,27 @@ def api(method: str, path: str, **kwargs: Any) -> requests.Response:
     url = f"{_base()}/projects/{_project()}{path}"
     headers = _headers()
     headers.update(kwargs.pop("headers", {}))
-    r = requests.request(method, url, headers=headers, timeout=120, **kwargs)
+    last_exc = None
+    for attempt in range(MAX_RETRIES):
+        try:
+            r = requests.request(method, url, headers=headers, timeout=120, **kwargs)
+            if r.status_code in RETRYABLE_STATUS and attempt < MAX_RETRIES - 1:
+                wait = (attempt + 1) * 10
+                _log.warning(f"GitLab {r.status_code} on {method} {path}, retrying in {wait}s (attempt {attempt+1})")
+                time.sleep(wait)
+                continue
+            return r
+        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
+            last_exc = e
+            if attempt < MAX_RETRIES - 1:
+                wait = (attempt + 1) * 10
+                _log.warning(f"GitLab network error on {method} {path}: {e}, retrying in {wait}s")
+                time.sleep(wait)
+                continue
+            raise
+    # Should not reach here, but just in case
+    if last_exc:
+        raise last_exc
     return r
 
 
