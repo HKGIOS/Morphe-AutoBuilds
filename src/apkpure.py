@@ -56,15 +56,27 @@ def _api_versions(package: str):
 
 
 def _api_match(versions, version: str):
-    """Find the API entry matching the requested version."""
-    for v in versions:
-        name = (v.get("version_name") or "").strip()
+    """Find the API entry matching the requested version.
+
+    Prefers entries that actually have download URLs, since some API entries
+    list a version without usable assets.
+    """
+    def _name_matches(name: str) -> bool:
         if not name:
-            continue
+            return False
         if name == version.strip():
-            return v
+            return True
         fn, rn = utils.normalize_version(name), utils.normalize_version(version)
-        if fn and rn and fn == rn:
+        return bool(fn) and bool(rn) and fn == rn
+
+    # First pass: matching version WITH download URLs
+    for v in versions:
+        if _name_matches((v.get("version_name") or "").strip()):
+            if _api_download_url(v):
+                return v
+    # Second pass: matching version even without URLs (caller decides)
+    for v in versions:
+        if _name_matches((v.get("version_name") or "").strip()):
             return v
     return None
 
@@ -117,7 +129,7 @@ def get_download_link(version: str, app_name: str, config: str) -> str:
             if dl:
                 logging.info(f"APKPure API download link for {app_name} v{version}")
                 return dl
-        logging.info(f"APKPure API has no {version} for {app_name}; trying FlareSolverr fallback")
+        logging.info(f"APKPure API has no downloadable {version} for {app_name}; trying FlareSolverr fallback")
 
     # Fallback: scrape the download page via FlareSolverr (for older versions).
     url = f"https://apkpure.net/{config['name']}/{config['package']}/download/{version}"
