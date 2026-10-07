@@ -208,13 +208,26 @@ def ensure_release(tag: str, name: str, description: str, ref: str) -> Dict[str,
 
 
 def list_asset_links(tag: str) -> List[Dict[str, Any]]:
-    # Paginate: the API defaults to 20 links per page and we have 100+.
-    links: List[Dict[str, Any]] = []
+    # The /releases/{tag}/assets/links endpoint is broken (returns []).
+    # Get links from the release object instead, which includes them.
+    try:
+        r = api("GET", f"/releases/{tag}")
+        if r.status_code == 404:
+            return []
+        r.raise_for_status()
+        release = r.json()
+        links = release.get("assets", {}).get("links", [])
+        if links:
+            return links
+    except Exception:
+        pass
+    # Fallback to the direct endpoint
+    links = []
     page = 1
     while True:
         r = api("GET", f"/releases/{tag}/assets/links?per_page=100&page={page}")
         if r.status_code == 404:
-            return []
+            return links
         r.raise_for_status()
         batch = r.json()
         links.extend(batch)
