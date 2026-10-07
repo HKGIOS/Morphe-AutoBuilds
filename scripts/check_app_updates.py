@@ -956,7 +956,9 @@ def plan_incremental(full_matrix: List[dict], old_manifest: Optional[dict],
             # Carry-over: nothing changed, safe to write the current signature.
             new_entries[mkey]["source_sig"] = cur_src_sig
             old_apk = carried_apk
-            if old_apk and old_apk in existing_apk_set:
+            # Asset-links API is broken (returns 0). Trust the manifest:
+            # if it has an APK record, carry it over.
+            if old_apk:
                 carry_over.append(old_apk)
                 logging.info(f"  carry  {app}/{src}/{arch}: {old_apk}")
             else:
