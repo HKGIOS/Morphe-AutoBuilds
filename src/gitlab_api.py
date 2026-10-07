@@ -121,7 +121,7 @@ def upload_package_file(apk_path: str | Path,
     return url
 
 
-def delete_package_file(filename: str,
+def list_package_files() -> List[Dict[str, Any]]:     """List all files in the morphe-apks generic package."""     # Get package ID first     r = api("GET", "/packages?package_name=morphe-apks&per_page=1")     r.raise_for_status()     pkgs = r.json()     if not pkgs:         return []     pkg_id = pkgs[0]["id"]     files: List[Dict[str, Any]] = []     page = 1     while True:         r = api("GET", f"/packages/{pkg_id}/package_files?per_page=100&page={page}")         r.raise_for_status()         batch = r.json()         files.extend(batch)         if len(batch) < 100:             break         page += 1     return files   def delete_package_file(filename: str,
                         package: str = PACKAGE_NAME,
                         version: str = PACKAGE_VERSION) -> bool:
     r = api("DELETE", f"/packages/generic/{package}/{version}/{filename}")
