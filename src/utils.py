@@ -676,6 +676,50 @@ def is_apk_signed(apk_path: Path) -> bool:
     return False
 
 
+BUNDLE_SUFFIXES = (".xapk", ".apks", ".apkm")
+
+
+def _is_bundle(path: Path) -> bool:
+    """Return True if the file is an APK bundle (XAPK/APKS/APKM or a zip
+    containing APK files). Bundle containers are not Android-signed; the
+    APK inside is."""
+    if not path or not path.exists():
+        return False
+    if path.suffix.lower() in BUNDLE_SUFFIXES:
+        return True
+    try:
+        if zipfile.is_zipfile(path):
+            with zipfile.ZipFile(path, "r") as z:
+                return any(n.lower().endswith(".apk") for n in z.namelist())
+    except Exception:
+        pass
+    return False
+
+
+def _extract_apk_from_bundle(bundle_path: Path, app_name: str) -> Path | None:
+    """Extract the main APK from a bundle file.
+
+    Picks the largest .apk entry (the main app APK, not config/density
+    splits). Returns the path to the extracted APK, or None on failure.
+    """
+    try:
+        with zipfile.ZipFile(bundle_path, "r") as z:
+            apk_entries = [n for n in z.namelist() if n.lower().endswith(".apk")]
+            if not apk_entries:
+                return None
+            main = max(apk_entries, key=lambda n: z.getinfo(n).file_size)
+            out = bundle_path.with_name(f"{app_name}-bundle-extracted.apk")
+            out.unlink(missing_ok=True)
+            with z.open(main) as src, open(out, "wb") as dst:
+                shutil.copyfileobj(src, dst)
+            if out.exists() and out.stat().st_size > 0:
+                logging.info(f"Extracted {main} ({out.stat().st_size} bytes) from bundle {bundle_path.name}")
+                return out
+    except Exception as e:
+        logging.debug(f"Bundle extraction failed for {bundle_path.name}: {e}")
+    return None
+
+
 def ensure_usable_apk(apk_path: Path, app_name: str, version: str) -> Path | None:
     """Return ``apk_path`` if it passes integrity and signature checks.
 
@@ -684,7 +728,20 @@ def ensure_usable_apk(apk_path: Path, app_name: str, version: str) -> Path | Non
     deleted and ``None`` is returned so the caller can try another
     download source instead of feeding a broken APK to the patcher
     (which crashes with an obscure NPE or rejects unsigned input).
+
+    Bundle files (XAPK/APKS/APKM) are handled first: the container itself
+    carries no Android signature, so the inner APK is extracted and the
+    checks run against it instead of discarding a good download.
     """
+    if _is_bundle(apk_path):
+        logging.info(f"{apk_path.name} is a bundle; extracting inner APK before checks")
+        extracted = _extract_apk_from_bundle(apk_path, app_name)
+        apk_path.unlink(missing_ok=True)
+        if not extracted:
+            logging.warning(f"Could not extract APK from bundle for {app_name}; discarding download")
+            return None
+        apk_path = extracted
+
     def _good(path: Path) -> bool:
         if not check_apk_integrity(path):
             return False
