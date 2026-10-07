@@ -48,8 +48,20 @@ def get_download_link(version: str, app_name: str, config: str) -> str:
         
         # Look for the download link; APKPure sometimes uses 'download_link' or 'fast-download'
         download_link = soup.find('a', id='download_link')
-        if download_link:
-            return download_link['href']
+        if download_link and download_link.get('href'):
+            href = download_link['href']
+            # If it's a relative URL, it's the direct link; if it's a page, extract from it
+            if 'd.apkpure.com' in href:
+                return href
+        
+        # Fallback: regex search for direct d.apkpure.com links (adapted from morphe-apps-builder)
+        import re
+        html = response.text
+        match = re.search(r'href="(https://d\.apkpure\.com/b/(?:XAPK|APK)/[^"]+)"', html)
+        if match:
+            dl_url = match.group(1).replace("&amp;", "&")
+            logging.info(f"APKPure direct link found via regex for {app_name}")
+            return dl_url
             
     except Exception as e:
         logging.error(f"Failed to fetch download link for {app_name} v{version}: {e}")
