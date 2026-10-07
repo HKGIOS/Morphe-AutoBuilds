@@ -331,24 +331,6 @@ jobs:
         if: steps.check-apks.outputs.skip_release == 'false'
         run: pip install requests
 
-      - name: Publish to GitLab Releases
-        if: steps.check-apks.outputs.skip_release == 'false'
-        env:
-          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
-          GITLAB_PROJECT_ID: "87288318"
-        run: |
-          if [ -z "$GITLAB_TOKEN" ]; then
-            echo "GITLAB_TOKEN secret is not set on this repo."
-            exit 1
-          fi
-          # gitlab_publish_release.py --merge: uploads new APKs + manifest to the
-          # GitLab generic package registry, add/replaces their release asset
-          # links, deletes superseded older-version APKs, refreshes notes.
-          # Upload-first-then-cleanup order is preserved inside the script.
-          python scripts/gitlab_publish_release.py \
-            --apks-dir ./release-apks \
-            --merge
-
       - name: Publish Summary
         if: steps.check-apks.outputs.skip_release == 'false'
         run: |
