@@ -14,7 +14,7 @@ from urllib.parse import urljoin
 import requests as plain_requests
 from bs4 import BeautifulSoup
 
-from src import session, utils
+from src import session, flaresolverr, utils
 
 
 LOCALES = ("en", "de", "fr", "in", "it", "ru", "jp", "kr")
@@ -34,11 +34,21 @@ def _is_app_page(response) -> bool:
 
 
 def _get(url: str):
-    """Use curl-cffi first, then standard requests if that edge rejects it."""
+    """Use curl-cffi first, then FlareSolverr for Cloudflare bypass, then plain requests."""
     try:
         response = session.get(url, headers=HEADERS, timeout=15)
         if _is_app_page(response) or response.status_code == 200 and "/apps/" in url:
             return response
+        # Check for Cloudflare challenge - use FlareSolverr
+        try:
+            text = response.text[:5000] if hasattr(response, 'text') else ""
+        except:
+            text = ""
+        if flaresolverr._is_cloudflare_challenge(response.status_code, text):
+            logging.info(f"Uptodown Cloudflare challenge for {url}, trying FlareSolverr")
+            fs_resp = flaresolverr.get_with_bypass(url, session=None, headers=HEADERS, timeout=30)
+            if fs_resp:
+                return fs_resp
         status = response.status_code
     except Exception as exc:
         status = type(exc).__name__
