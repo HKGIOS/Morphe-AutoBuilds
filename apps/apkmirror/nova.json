@@ -1,9 +1,9 @@
 {
-  "org": "nova",
-  "name": "nova",
+  "org": "teslacoilsw",
+  "name": "nova-launcher",
   "type": "APK",
   "arch": "universal",
   "dpi": "nodpi",
   "package": "com.teslacoilsw.launcher",
-  "version": ""
+  "version": "8.8.8"
 }
