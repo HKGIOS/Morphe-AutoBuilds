@@ -1001,6 +1001,14 @@ def plan_incremental(full_matrix: List[dict], old_manifest: Optional[dict],
         else:
             logging.info(f"  drop carry {apk}: its (app,source) is rebuilding")
 
+    # Carry over old manifest entries for apps no longer in patch-config
+    # (temporarily excluded). Their APKs remain in the release; don't drop them.
+    for mkey, old_entry in old_entries.items():
+        if mkey not in new_entries:
+            new_entries[mkey] = old_entry
+            if old_entry.get('apk'):
+                filtered_carry.append(old_entry['apk'])
+
     return deduped, filtered_carry, new_entries
 
 
