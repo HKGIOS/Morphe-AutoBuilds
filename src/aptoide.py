@@ -4,9 +4,16 @@ import logging
 import re
 from typing import Dict, List, Optional, Tuple
 from bs4 import BeautifulSoup
-from src import session, utils
+from src import session, flaresolverr, utils
 
 BASE_URL = "https://ws75.aptoide.com/api/7/"
+
+# Config names whose aptoide.com website slug differs from the config name.
+_APTOIDE_SLUG_OVERRIDES = {
+    "mirinae-learn-korean-with-ai": "mirinae",
+    "soccer-scores-and-sports-livescore-sofascore": "sofascore-live-score",
+    "snorelab-record-your-snoring": "snorelab",
+}
 
 
 def _safe_get_json(url: str) -> Optional[dict]:
@@ -22,7 +29,8 @@ def _safe_get_json(url: str) -> Optional[dict]:
 
 
 def _website_slug(config: Dict) -> str:
-    return (config.get('slug') or config.get('name') or '').strip().lower()
+    name = (config.get('slug') or config.get('name') or '').strip().lower()
+    return _APTOIDE_SLUG_OVERRIDES.get(name, name)
 
 
 def _fetch_website_versions(slug: str) -> Optional[Tuple[List[Tuple[str, int]], Optional[str]]]:
@@ -36,11 +44,28 @@ def _fetch_website_versions(slug: str) -> Optional[Tuple[List[Tuple[str, int]], 
     if not slug:
         return None
     url = f"https://{slug}.en.aptoide.com/versions"
+    html = None
     try:
         res = session.get(url, timeout=20)
-        if res.status_code != 200:
-            return None
-        soup = BeautifulSoup(res.content, "html.parser")
+        if res.status_code == 200 and b"vername" in res.content:
+            html = res.content
+        else:
+            logging.info(f"Aptoide website direct fetch for {slug} returned {res.status_code}; trying FlareSolverr")
+    except Exception as e:
+        logging.info(f"Aptoide website direct fetch for {slug} failed ({e}); trying FlareSolverr")
+    if html is None:
+        try:
+            fres = flaresolverr.get_with_bypass(url, session=session, timeout=45)
+            if fres is not None and getattr(fres, "status_code", 0) == 200 and b"vername" in fres.content:
+                html = fres.content
+                logging.info(f"Aptoide website scrape for {slug} succeeded via FlareSolverr")
+        except Exception as e:
+            logging.info(f"Aptoide website FlareSolverr fetch for {slug} failed: {e}")
+    if html is None:
+        logging.info(f"Aptoide website scrape found no version data for {slug}")
+        return None
+    try:
+        soup = BeautifulSoup(html, "html.parser")
         for script in soup.find_all("script"):
             txt = script.string
             if txt and '"vername"' in txt and txt.strip().startswith('{"props"'):
@@ -53,9 +78,10 @@ def _fetch_website_versions(slug: str) -> Optional[Tuple[List[Tuple[str, int]], 
                 m = re.search(r'"file":\s*\{[^}]*"path":\s*"([^"]+)"', json.dumps(data))
                 if m:
                     path = m.group(1)
+                logging.info(f"Aptoide website: {slug} has {len(versions)} versions, latest {versions[0][0]}")
                 return versions, path
     except Exception as e:
-        logging.debug(f"Aptoide website scrape failed for {slug}: {e}")
+        logging.debug(f"Aptoide website parse failed for {slug}: {e}")
     return None
 
 
