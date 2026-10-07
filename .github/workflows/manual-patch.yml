@@ -40,10 +40,10 @@ jobs:
   manual-patch:
     runs-on: ubuntu-latest
     services:
-      trawl:
-        image: ghcr.io/germondai/trawl:latest
+      flaresolverr:
+        image: ghcr.io/flaresolverr/flaresolverr:latest
         ports:
-          - 8191:8191
+          - 8192:8191
         options: --shm-size=1gb
     permissions:
       contents: write
@@ -90,7 +90,7 @@ jobs:
           SOURCE: ${{ inputs.source }}
           ARCH: ${{ inputs.architecture }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TRAWL_URL: http://localhost:8191
+          FLARESOLVERR_URL: http://localhost:8192/v1
         run: |
           echo "🔧 Building ${{ inputs.app_name }} with ${{ inputs.source }} for ${{ inputs.architecture }} architecture..."
           python -m src
