@@ -4,6 +4,5 @@
   "type": "APK",
   "arch": "universal",
   "dpi": "nodpi",
-  "package": "com.crunchyroll.crunchyroid",
-  "version": "3.75.0"
+  "package": "com.crunchyroll.crunchyroid"
 }

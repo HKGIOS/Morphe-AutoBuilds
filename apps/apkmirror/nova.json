@@ -4,6 +4,5 @@
   "type": "APK",
   "arch": "universal",
   "dpi": "nodpi",
-  "package": "com.teslacoilsw.launcher",
-  "version": "8.8.8"
+  "package": "com.teslacoilsw.launcher"
 }
