@@ -137,6 +137,13 @@ def get_latest_version(app_name: str, config: Dict) -> Optional[str]:
 
 
 def get_download_link(version: str, app_name: str, config: Dict) -> Optional[str]:
+    # Strip variant suffix from version for matching (e.g., "18.0.3.954559732-release-arm64-v8a" -> "18.0.3.954559732")
+    import re
+    base_version = re.match(r'^(\d[\d.]*\d)', version)
+    if base_version:
+        version = base_version.group(1)
+    # Exclude beta variants if configured
+    exclude = config.get('exclude_variant', '')
     # 1. Try the website first (the API backend is stale for many apps).
     slug = _website_slug(config)
     if slug:
@@ -144,6 +151,8 @@ def get_download_link(version: str, app_name: str, config: Dict) -> Optional[str
         if result:
             versions, latest_path = result
             for vername, _vercode in versions:
+                if exclude and exclude.lower() in vername.lower():
+                    continue
                 if _version_matches(vername, version):
                     # Only the latest version carries a direct download path
                     # on the website; older versions have no URL without their
