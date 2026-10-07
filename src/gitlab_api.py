@@ -90,15 +90,30 @@ def package_file_url(filename: str,
             f"{package}/{version}/{filename}")
 
 
+def safe_filename(name: str) -> str:
+    """Make a filename acceptable to the GitLab generic package registry.
+
+    GitLab rejects names containing characters like parentheses
+    (HTTP 400 "file_name is invalid"). Keep names readable: turn '('
+    into '-', drop ')', and strip anything outside [A-Za-z0-9._-].
+    """
+    name = name.replace("(", "-").replace(")", "")
+    safe = "".join(c for c in name if c.isascii() and (c.isalnum() or c in "._-"))
+    return safe or "file"
+
+
 def upload_package_file(apk_path: str | Path,
                         package: str = PACKAGE_NAME,
                         version: str = PACKAGE_VERSION) -> str:
     """Upload an APK to the generic package registry. Returns the download URL."""
     apk_path = Path(apk_path)
-    url = package_file_url(apk_path.name, package, version)
+    # GitLab rejects some filename characters (400 file_name is invalid);
+    # upload under the sanitized name so the PUT succeeds.
+    safe_name = safe_filename(apk_path.name)
+    url = package_file_url(safe_name, package, version)
     _log.info(f"Uploading {apk_path.name} to GitLab package registry...")
     with apk_path.open("rb") as f:
-        r = api("PUT", f"/packages/generic/{package}/{version}/{apk_path.name}",
+        r = api("PUT", f"/packages/generic/{package}/{version}/{safe_name}",
                 data=f)
     if r.status_code not in (200, 201):
         raise RuntimeError(f"Package upload failed ({r.status_code}): {r.text[:300]}")

@@ -16,7 +16,7 @@ def get_latest_version(app_name: str, config: str) -> str:
 
     try:
         # Added headers to the request
-        response = flaresolverr.get_with_bypass(url, session=session, headers=HEADERS, timeout=20) or session.get(url, headers=HEADERS)
+        response = flaresolverr.get_with_bypass(url, session=session, headers=HEADERS, timeout=60) or session.get(url, headers=HEADERS)
         response.raise_for_status()
         
         content_size = len(response.content)
@@ -38,7 +38,7 @@ def get_download_link(version: str, app_name: str, config: str) -> str:
     url = f"https://apkpure.net/{config['name']}/{config['package']}/download/{version}"
 
     try:
-        response = flaresolverr.get_with_bypass(url, session=session, headers=HEADERS, timeout=20) or session.get(url, headers=HEADERS)
+        response = flaresolverr.get_with_bypass(url, session=session, headers=HEADERS, timeout=60) or session.get(url, headers=HEADERS)
         response.raise_for_status()
         
         content_size = len(response.content)

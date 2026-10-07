@@ -149,7 +149,7 @@ def _xapk_url_via_trawl(page_url: str) -> str | None:
         logging.info("Uptodown XAPK download URL obtained via browser rendering")
         return link
     # Fallback: search rendered HTML for dw.uptodown.com URLs
-    for match in re.finditer(r'https://dw\.uptodown\.com/dwn/[A-Za-z0-9_\-/]+', rendered.text):
+    for match in re.finditer(r'https://dw\.uptodown\.com/dwn/[A-Za-z0-9_\-/]+', result["html"]):
         url = match.group(0)
         logging.info("Uptodown XAPK download URL found in rendered page")
         return url
