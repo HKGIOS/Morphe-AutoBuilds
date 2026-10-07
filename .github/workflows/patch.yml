@@ -182,6 +182,18 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      - name: Wait for FlareSolverr
+        run: |
+          echo "Waiting for FlareSolverr to be ready..."
+          for i in $(seq 1 30); do
+            if curl -s http://localhost:8192/ > /dev/null 2>&1; then
+              echo "FlareSolverr is ready."
+              break
+            fi
+            echo "Waiting... ($i/30)"
+            sleep 5
+          done
+
       - name: Build APK
         env:
           APP_NAME: ${{ matrix.app_name }}
