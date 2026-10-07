@@ -109,10 +109,6 @@
       "source": "Hoo"
     },
     {
-      "app_name": "proton-mail",
-      "source": "hxreborn"
-    },
-    {
       "app_name": "proton-vpn",
       "source": "Hoo"
     },
@@ -143,10 +139,6 @@
     {
       "app_name": "bussu",
       "source": "Hoo"
-    },
-    {
-      "app_name": "number",
-      "source": "revanced-kitadai31"
     },
     {
       "app_name": "pandora",
@@ -201,19 +193,11 @@
       "source": "Hoo"
     },
     {
-      "app_name": "lingory",
-      "source": "Hoo"
-    },
-    {
       "app_name": "teuida",
       "source": "Hoo"
     },
     {
       "app_name": "sofascore",
-      "source": "Hoo"
-    },
-    {
-      "app_name": "ttmik-stories",
       "source": "Hoo"
     },
     {
@@ -349,10 +333,6 @@
       "source": "Hoo"
     },
     {
-      "app_name": "ibs_paint",
-      "source": "Hoo"
-    },
-    {
       "app_name": "pokecardex",
       "source": "almewty"
     },
@@ -379,10 +359,6 @@
     {
       "app_name": "facebook",
       "source": "devanced"
-    },
-    {
-      "app_name": "viber",
-      "source": "canh0chua"
     }
   ]
 }
