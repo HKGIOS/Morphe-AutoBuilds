@@ -1,10 +1,6 @@
 {
   "patch_list": [
     {
-      "app_name": "tiktok",
-      "source": "icysymmetra"
-    },
-    {
       "app_name": "youtube",
       "source": "morphe"
     },
